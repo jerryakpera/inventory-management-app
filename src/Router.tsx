@@ -4,6 +4,8 @@ import AdminLayout from '@/features/admin/layout/AdminLayout';
 
 import * as adminPages from '@/features/admin/pages';
 import * as productsPages from '@/features/products/pages';
+import * as taxonomyPages from '@/features/taxonomy/pages';
+
 import { GuestRoute, ProtectedRoute } from '@/components/auth';
 
 export const router = createBrowserRouter([
@@ -38,6 +40,10 @@ export const router = createBrowserRouter([
       {
         path: 'products/add',
         element: <productsPages.AddProductPage />,
+      },
+      {
+        path: 'categories/',
+        element: <taxonomyPages.CategoriesPage />,
       },
     ],
   },

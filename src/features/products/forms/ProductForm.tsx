@@ -3,12 +3,12 @@ import { useForm } from 'react-hook-form';
 
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 
-import { Category } from '@/features/categories/types';
+import { Category } from '@/features/taxonomy/types';
 import { AddProduct, Unit } from '@/features/products/types';
-import { Button } from '@/components/ui/button';
 
 type ProductFormProps = {
   units: Unit[];
@@ -24,7 +24,7 @@ export const ProductForm = ({
   const {
     register,
     handleSubmit,
-    formState: { errors, isLoading, isSubmitting },
+    formState: { errors },
   } = useForm<AddProduct>({
     mode: 'onBlur',
     reValidateMode: 'onChange',

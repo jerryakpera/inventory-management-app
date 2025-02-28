@@ -1,4 +1,5 @@
 import {
+  Tag,
   Package,
   FileText,
   Settings,
@@ -34,6 +35,16 @@ export const data = {
       items: [
         { title: 'User Management', url: '#' },
         { title: 'Activity Logs', url: '#' },
+      ],
+    },
+    {
+      title: 'Miscellaneous',
+      url: '#',
+      icon: Tag,
+      items: [
+        { title: 'Categories', url: '/categories' },
+        { title: 'Units', url: '/units' },
+        { title: 'Brands', url: '/brands' },
       ],
     },
     {
