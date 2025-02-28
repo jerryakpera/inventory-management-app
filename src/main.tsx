@@ -1,5 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { AnimatePresence } from 'framer-motion';
 import { RouterProvider } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -16,7 +17,9 @@ createRoot(document.getElementById('root')!).render(
         defaultTheme='dark'
         storageKey='vite-ui-theme'
       >
-        <RouterProvider router={router} />
+        <AnimatePresence mode='wait'>
+          <RouterProvider router={router} />
+        </AnimatePresence>
       </ThemeProvider>
     </QueryClientProvider>
   </StrictMode>

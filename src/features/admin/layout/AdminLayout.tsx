@@ -21,6 +21,7 @@ import { Separator } from '@/components/ui/separator';
 import { ModeToggle } from '@/components/theme/ModeToggle';
 import { useAuthApi } from '@/hooks/use-auth-api';
 import { Outlet } from 'react-router-dom';
+import { PageTransition } from '@/components/theme';
 
 export default function Page() {
   const authApiClient = useAuthApi();

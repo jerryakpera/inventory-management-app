@@ -1,3 +1,9 @@
+import { PageTransition } from '@/components/theme';
+
 export const ProductDetailPage = () => {
-  return <div>ProductDetailPage</div>;
+  return (
+    <PageTransition>
+      <div>ProductDetailPage</div>;
+    </PageTransition>
+  );
 };

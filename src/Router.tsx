@@ -1,4 +1,3 @@
-// Define routes for my application using react-router-dom
 import { createBrowserRouter } from 'react-router-dom';
 
 import AdminLayout from '@/features/admin/layout/AdminLayout';

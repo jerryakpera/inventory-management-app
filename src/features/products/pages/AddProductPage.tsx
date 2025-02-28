@@ -4,6 +4,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { useAuthApi } from '@/hooks/use-auth-api';
 import { ProductForm } from '@/features/products/forms/ProductForm';
+import { PageTransition } from '@/components/theme';
 
 export const AddProductPage = () => {
   const navigate = useNavigate();
@@ -73,19 +74,21 @@ export const AddProductPage = () => {
   }
 
   return (
-    <div className='py-4 sm:py-10 space-y-4'>
-      <div>
-        <h1 className='text-xl font-bold tracking-wide'>Add Product</h1>
-        <h3 className='text-sm text-gray-700 font-medium'>
-          Fill in the form to add a new product to the inventory.
-        </h3>
-      </div>
+    <PageTransition>
+      <div className='py-4 sm:py-10 space-y-4'>
+        <div>
+          <h1 className='text-xl font-bold tracking-wide'>Add Product</h1>
+          <h3 className='text-sm text-gray-700 font-medium'>
+            Fill in the form to add a new product to the inventory.
+          </h3>
+        </div>
 
-      <ProductForm
-        units={unitsQuery.data}
-        categories={categoriesQuery.data}
-        handleFormSubmit={addProductMutation.mutate}
-      />
-    </div>
+        <ProductForm
+          units={unitsQuery.data}
+          categories={categoriesQuery.data}
+          handleFormSubmit={addProductMutation.mutate}
+        />
+      </div>
+    </PageTransition>
   );
 };
