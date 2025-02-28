@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { debounce } from 'lodash';
+import { Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
 import {
@@ -23,6 +25,7 @@ import {
   TableHeader,
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 import { useAuthApi } from '@/hooks/use-auth-api';
 
@@ -117,12 +120,19 @@ export function ProductsTable<TData, TValue>({
 
   return (
     <div>
-      <div className='flex items-center py-4'>
+      <div className='flex items-center py-4 justify-between'>
         <Input
           placeholder='Search products...'
           onChange={(event) => throttledSearch(event.target.value)}
           className='max-w-sm'
         />
+
+        <Link to='/products/add'>
+          <Button>
+            <Plus />
+            Add Product
+          </Button>
+        </Link>
       </div>
       <div className='rounded-md border'>
         <Table>

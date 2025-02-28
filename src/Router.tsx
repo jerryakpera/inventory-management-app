@@ -29,10 +29,13 @@ export const router = createBrowserRouter([
         element: <adminPages.Dashboard />,
       },
       {
+        path: 'products/:id',
+        element: <productsPages.ProductDetailPage />,
+      },
+      {
         path: 'products',
         element: <productsPages.ProductsPage />,
       },
-      // Create route for adding product
       {
         path: 'products/add',
         element: <productsPages.AddProductPage />,

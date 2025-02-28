@@ -83,3 +83,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .select {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-transparent dark:text-white;
+  }
+
+  .option {
+    @apply py-1 px-2 dark:bg-transparent dark:text-white;
+  }
+}

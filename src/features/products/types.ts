@@ -1,3 +1,18 @@
+export type AddProduct = {
+  name: string;
+  unit: number;
+  image: File | null;
+  is_active: boolean;
+  description: string;
+  category: number | null;
+};
+
+export type Unit = {
+  id: number;
+  name: string;
+  symbol: string;
+};
+
 export type Product = {
   id: number;
   author: number;
@@ -5,7 +20,6 @@ export type Product = {
   variant_count: number;
   category?: number | null;
   category_name: string | null;
-  tags: string[];
   description?: string | null;
   slug: string;
   unit: number;
