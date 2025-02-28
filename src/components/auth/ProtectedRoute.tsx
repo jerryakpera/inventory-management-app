@@ -9,11 +9,7 @@ type ProtectedRouteProps = {
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const location = useLocation();
 
-  const { data, isLoading } = useAuthToken();
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const { data } = useAuthToken();
 
   if (!data) {
     return (

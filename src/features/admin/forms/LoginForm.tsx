@@ -30,7 +30,7 @@ export function LoginForm({
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
+    formState: { errors, isSubmitting },
   } = useForm<LoginFormType>({
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -124,7 +124,7 @@ export function LoginForm({
         <Button
           type='submit'
           className='w-full'
-          disabled={loginMutation.isPending}
+          disabled={loginMutation.isPending || isSubmitting}
         >
           Login
         </Button>

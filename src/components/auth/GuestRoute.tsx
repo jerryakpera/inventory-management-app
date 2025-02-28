@@ -9,11 +9,7 @@ type GuestRouteProps = {
 export function GuestRoute({ children }: GuestRouteProps) {
   const location = useLocation();
 
-  const { data, isLoading } = useAuthToken();
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const { data } = useAuthToken();
 
   if (data) {
     const { access } = data;
