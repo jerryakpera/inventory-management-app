@@ -54,31 +54,11 @@ export const productColumns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: 'variant_count',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant='ghost'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Variants
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
-      );
-    },
+    header: () => <div className='font-medium'>Variants</div>,
   },
   {
     accessorKey: 'category_name',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant='ghost'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Category
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
-      );
-    },
+    header: () => <div className='font-medium'>Category</div>,
     cell: ({ row }) => {
       const category = row.getValue('category_name') as string;
       const formattedCategory = _.capitalize(category);

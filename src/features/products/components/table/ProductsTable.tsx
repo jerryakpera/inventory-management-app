@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { debounce } from 'lodash';
 import { useQuery } from '@tanstack/react-query';
 
 import {
@@ -42,6 +43,7 @@ export function ProductsTable<TData, TValue>({
   const authApi = useAuthApi();
 
   const [rowSelection, setRowSelection] = useState({});
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [pagination, setPagination] = useState<PaginationState>({
@@ -49,24 +51,51 @@ export function ProductsTable<TData, TValue>({
     pageSize: 10,
   });
 
-  const fetchProducts = async (pagination: PaginationState) => {
-    const { pageIndex, pageSize } = pagination;
+  const throttledSearch = debounce((value: string) => {
+    setSearchTerm(value);
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, 500);
 
+  const fetchProducts = async (
+    pagination: PaginationState,
+    search?: string,
+    sorting?: SortingState
+  ) => {
+    const { pageIndex, pageSize } = pagination;
     const offset = pageIndex * pageSize;
-    const response = await authApi.get(
-      `/v1/products/?limit=${pageSize}&offset=${offset}`
-    );
+
+    let url = `/v1/products/?limit=${pageSize}&offset=${offset}`;
+
+    if (search) {
+      url += `&search=${search}`;
+    }
+
+    if (sorting && sorting.length > 0) {
+      console.log(sorting);
+      const { id, desc } = sorting[0];
+      const ordering = desc ? `-${id}` : id;
+      url += `&ordering=${ordering}`;
+    }
+
+    const response = await authApi.get(url);
 
     return response.data;
   };
 
   const fetchProductsQuery = useQuery({
-    queryKey: ['products', pagination.pageIndex, pagination.pageSize],
-    queryFn: () => fetchProducts(pagination),
+    queryKey: [
+      'products',
+      pagination.pageIndex,
+      pagination.pageSize,
+      searchTerm,
+      sorting,
+    ],
+    queryFn: () => fetchProducts(pagination, searchTerm, sorting),
   });
 
   const table = useReactTable({
     columns,
+    manualSorting: true,
     manualPagination: true,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -90,11 +119,8 @@ export function ProductsTable<TData, TValue>({
     <div>
       <div className='flex items-center py-4'>
         <Input
-          placeholder='Filter products...'
-          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-          onChange={(event) =>
-            table.getColumn('name')?.setFilterValue(event.target.value)
-          }
+          placeholder='Search products...'
+          onChange={(event) => throttledSearch(event.target.value)}
           className='max-w-sm'
         />
       </div>
