@@ -1,3 +1,6 @@
+import { useNavigate } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import {
   Bell,
   LogOut,
@@ -24,6 +27,8 @@ import {
   SidebarMenuButton,
 } from '@/components/ui/sidebar';
 
+import { useAuthApi } from '@/hooks/use-auth-api';
+
 export function NavUser({
   user,
 }: {
@@ -33,7 +38,29 @@ export function NavUser({
     avatar: string;
   };
 }) {
+  const navigate = useNavigate();
   const { isMobile } = useSidebar();
+  const authApiClient = useAuthApi();
+  const queryClient = useQueryClient();
+
+  const logoutRequest = async () => {
+    return await authApiClient.post('/token/logout/');
+  };
+
+  const logoutMutation = useMutation({
+    mutationKey: ['logout'],
+    mutationFn: logoutRequest,
+    onError: (error) => {
+      console.error(error);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+      queryClient.invalidateQueries({ queryKey: ['refreshToken'] });
+      queryClient.clear();
+
+      navigate('/login');
+    },
+  });
 
   return (
     <SidebarMenu>
@@ -102,7 +129,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => logoutMutation.mutate()}>
               <LogOut />
               Log out
             </DropdownMenuItem>

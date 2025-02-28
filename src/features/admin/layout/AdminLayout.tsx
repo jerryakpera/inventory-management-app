@@ -1,3 +1,4 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { AppSidebar } from '@/features/admin/layout/components';
 
 import {
@@ -14,14 +15,30 @@ import {
   SidebarTrigger,
   SidebarProvider,
 } from '@/components/ui/sidebar';
+import { Toaster } from '@/components/ui/sonner';
 import { Separator } from '@/components/ui/separator';
 
 import { ModeToggle } from '@/components/theme/ModeToggle';
+import { useAuthApi } from '@/hooks/use-auth-api';
 
 export default function Page() {
+  const authApiClient = useAuthApi();
+
+  const fetchUser = async () => {
+    const response = await authApiClient.get('/v1/users/me/');
+    return response.data;
+  };
+
+  useQuery({
+    queryKey: ['user'],
+    queryFn: fetchUser,
+    staleTime: 1000 * 60 * 5,
+  });
+
   return (
     <SidebarProvider>
       <AppSidebar />
+      <Toaster />
       <SidebarInset>
         <header className='flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12'>
           <div className='flex items-center gap-2 px-4'>
