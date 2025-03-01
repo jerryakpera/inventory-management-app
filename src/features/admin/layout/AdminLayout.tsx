@@ -1,4 +1,6 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { ArrowLeft } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { AppSidebar } from '@/features/admin/layout/components';
 
 import {
@@ -15,15 +17,15 @@ import {
   SidebarTrigger,
   SidebarProvider,
 } from '@/components/ui/sidebar';
+import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/sonner';
 import { Separator } from '@/components/ui/separator';
 
-import { ModeToggle } from '@/components/theme/ModeToggle';
 import { useAuthApi } from '@/hooks/use-auth-api';
-import { Outlet } from 'react-router-dom';
-import { PageTransition } from '@/components/theme';
+import { ModeToggle } from '@/components/theme/ModeToggle';
 
 export default function Page() {
+  const navigate = useNavigate();
   const authApiClient = useAuthApi();
 
   const fetchUser = async () => {
@@ -69,6 +71,16 @@ export default function Page() {
           </div>
         </header>
         <div className='flex flex-1 flex-col gap-4 p-4 pt-0'>
+          <div className='w-full'>
+            <Button
+              size='sm'
+              variant='outline'
+              onClick={() => navigate(-1)}
+            >
+              <ArrowLeft size={16} />
+              Back
+            </Button>
+          </div>
           <Outlet />
         </div>
       </SidebarInset>

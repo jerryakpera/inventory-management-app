@@ -1,18 +1,15 @@
-import { capitalize } from 'lodash';
+import { Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+
+import { PageTitle } from '@/components/shared';
 import { useAuthApi } from '@/hooks/use-auth-api';
 import { PageTransition } from '@/components/theme';
 import { Category } from '@/features/taxonomy/types';
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { CategoryItem } from '@/features/taxonomy/components';
 
 export const CategoriesPage = () => {
   const authApi = useAuthApi();
@@ -22,39 +19,62 @@ export const CategoriesPage = () => {
     return response.data.results;
   };
 
-  const { data: categories, isLoading } = useQuery<Category[]>({
+  const { data, isLoading } = useQuery<Category[]>({
     queryKey: ['categories'],
     queryFn: fetchCategories,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    staleTime: 1000 * 60 * 5,
   });
+
+  const [search, setSearch] = useState('');
+  const [categories, setCategories] = useState<Category[]>(data || []);
+
+  useEffect(() => {
+    if (!data) return;
+    if (!search) {
+      setCategories(data);
+      return;
+    }
+
+    const filteredCategories = data.filter((category) =>
+      category.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+    setCategories(filteredCategories);
+  }, [search, data]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <PageTransition>
       <div className='py-4 sm:py-10 space-y-4'>
-        <div>
-          <h1 className='text-xl font-bold tracking-wide'>Categories</h1>
-          <h3 className='text-sm text-gray-700 font-medium'>
-            View and manage the list of categories available in the inventory
-          </h3>
+        <div className='flex justify-between items-center'>
+          <PageTitle
+            title='Categories'
+            subtitle='View and manage the list of categories available in the inventory'
+          />
+
+          <Button>
+            <Plus />
+            <span className='hidden md:block'>Add Category</span>
+          </Button>
         </div>
 
-        <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4'>
+        <div>
+          <Input
+            value={search}
+            placeholder='search categories'
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
+        <div className='grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-4'>
           {categories?.map((category) => {
             return (
-              <Card key={category.id}>
-                <CardHeader>
-                  <CardTitle>{capitalize(category.name)}</CardTitle>
-                  <CardDescription>{category.description}</CardDescription>
-                </CardHeader>
-                {category.image}
-                {category.image && (
-                  <CardContent>
-                    <img src={category.image} />
-                  </CardContent>
-                )}
-              </Card>
+              <CategoryItem
+                key={category.id}
+                category={category}
+              />
             );
           })}
         </div>
