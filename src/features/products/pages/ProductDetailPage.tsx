@@ -3,6 +3,8 @@ import { capitalize } from 'lodash';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { noImage } from '@/assets/images';
+
 import { Button } from '@/components/ui/button';
 
 import { PageTitle } from '@/components/shared';
@@ -10,6 +12,7 @@ import { useAuthApi } from '@/hooks/use-auth-api';
 import { PageTransition } from '@/components/theme';
 import { Product } from '@/features/products/types';
 import { DeleteProduct } from '@/features/products/components/DeleteProduct';
+import { Edit } from 'lucide-react';
 
 export const ProductDetailPage = () => {
   const authApi = useAuthApi();
@@ -43,7 +46,7 @@ export const ProductDetailPage = () => {
         {data ? (
           <>
             <div className='flex justify-end space-x-2'>
-              <Link to={`/categories/${id}/edit`}>
+              <Link to={`/products/${id}/edit`}>
                 <Button
                   size='sm'
                   className='text-white bg-blue-600'
@@ -64,17 +67,24 @@ export const ProductDetailPage = () => {
               </DeleteProduct>
             </div>
             <div className='flex flex-col gap-4 md:flex-row items-center'>
-              {data.image && (
-                <div>
-                  <img
-                    src={data.image}
-                    alt={data.name}
-                    className='w-28 h-3w-28 object-cover rounded-md border'
-                  />
-                </div>
-              )}
+              <div className='relative w-36 h-36 rounded-md border-2 border-gray-300 dark:border-gray-700'>
+                <img
+                  alt={data.name || ''}
+                  src={data.image || noImage}
+                  className='w-full h-full object-cover rounded-md'
+                />
+                <Link to={`/products/${id}/edit/image`}>
+                  <Button
+                    size='icon'
+                    className='absolute top-2 right-2 shadow-md'
+                  >
+                    <Edit />
+                  </Button>
+                </Link>
+              </div>
 
               <PageTitle
+                tags={data.tags || []}
                 title={capitalize(data.name)}
                 subtitle={data.description || ''}
               />

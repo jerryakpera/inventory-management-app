@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 import { RowActions } from './RowActions';
 import { Product } from '@/features/products/types';
+import { Link } from 'react-router-dom';
 
 export const productColumns: ColumnDef<Product>[] = [
   {
@@ -65,9 +66,18 @@ export const productColumns: ColumnDef<Product>[] = [
       );
     },
     cell: ({ row }) => {
+      const product = row.original;
+
       const name = row.getValue('name') as string;
       const formattedName = _.capitalize(name);
-      return <div className='text-left font-medium'>{formattedName}</div>;
+      return (
+        <Link
+          to={`/products/${product.id}`}
+          className='text-left font-semibold cursor-pointer text-blue-600 duration-75 hover:text-blue-700'
+        >
+          {formattedName}
+        </Link>
+      );
     },
   },
   {

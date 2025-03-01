@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useAuthApi } from '@/hooks/use-auth-api';
 import { PageTransition } from '@/components/theme';
+import { AddProduct } from '@/features/products/types';
 import { ProductForm } from '@/features/products/forms/ProductForm';
 
 export const AddProductPage = () => {
@@ -37,7 +38,8 @@ export const AddProductPage = () => {
 
   const addProductMutation = useMutation({
     mutationKey: ['add-product'],
-    mutationFn: (formData: FormData) => authApi.post('/v1/products/', formData),
+    mutationFn: (formData: AddProduct) =>
+      authApi.post('/v1/products/', formData),
     onSettled: async () => {
       await queryClient.invalidateQueries({ queryKey: ['products'] });
     },
@@ -63,7 +65,7 @@ export const AddProductPage = () => {
     },
   });
 
-  const onSubmit = async (formData: FormData) => {
+  const onSubmit = async (formData: AddProduct) => {
     addProductMutation.mutate(formData);
 
     toast.success('Product added successfully!');
@@ -85,8 +87,8 @@ export const AddProductPage = () => {
         </div>
 
         <ProductForm
+          onSubmit={onSubmit}
           units={unitsQuery.data}
-          handleFormSubmit={onSubmit}
           categories={categoriesQuery.data}
         />
       </div>

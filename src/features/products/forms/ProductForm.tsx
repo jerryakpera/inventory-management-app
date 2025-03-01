@@ -8,74 +8,86 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 
 import { Category } from '@/features/taxonomy/types';
-import { AddProduct, Unit } from '@/features/products/types';
+import { AddProduct, Product, Unit } from '@/features/products/types';
 
 type ProductFormProps = {
   units: Unit[];
+  product?: Product;
   categories: Category[];
-  handleFormSubmit: (formData: FormData) => void;
+  onSubmit: (formData: AddProduct) => void;
 };
 
 export const ProductForm = ({
   units,
+  product,
+  onSubmit,
   categories,
-  handleFormSubmit,
 }: ProductFormProps) => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<AddProduct>({
     mode: 'onBlur',
     reValidateMode: 'onChange',
+    defaultValues: {
+      name: product?.name,
+      unit: product?.unit,
+      category: product?.category,
+      is_active: product?.is_active,
+      tagsString: product?.tags.join(', '),
+      description: product?.description || '',
+    },
   });
 
-  const onSubmit = (formData: AddProduct) => {
-    const data = new FormData();
+  const handleFormSubmit = (formData: AddProduct) => {
+    const data = {
+      ...formData,
+      tags: formData.tagsString?.split(',').map((tag) => tag.trim()),
+    };
 
-    // Append all fields except 'image'
-    Object.entries(formData).forEach(([key, value]) => {
-      if (key !== 'image') {
-        data.append(key, value as string);
-      }
-    });
-
-    // Handle file input properly
-    const fileInput = document.querySelector<HTMLInputElement>(
-      'input[name="image"]'
-    );
-    if (fileInput?.files?.[0]) {
-      data.append('image', fileInput.files[0]);
-    }
-
-    handleFormSubmit(data);
+    onSubmit(data);
   };
 
   return (
     <form
       className='space-y-6'
-      onSubmit={handleSubmit(onSubmit)}
+      encType='multipart/form-data'
+      onSubmit={handleSubmit(handleFormSubmit)}
     >
-      <div>
-        <Label htmlFor='name'>Product name</Label>
-        <Input
-          placeholder='Almond Seeds'
-          {...register('name', {
-            required: 'The product name is required',
-            minLength: {
-              value: 3,
-              message: 'The product name should be at least 3 characters',
-            },
-          })}
-        />
-        {errors.name && (
-          <div className='text-xs text-red-500 font-medium'>
-            {errors.name.message}
-          </div>
-        )}
-      </div>
-
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+        <div>
+          <Label htmlFor='name'>Product name</Label>
+          <Input
+            placeholder='Almond Seeds'
+            {...register('name', {
+              required: 'The product name is required',
+              minLength: {
+                value: 3,
+                message: 'The product name should be at least 3 characters',
+              },
+            })}
+          />
+          {errors.name && (
+            <div className='text-xs text-red-500 font-medium'>
+              {errors.name.message}
+            </div>
+          )}
+        </div>
+
+        <div>
+          <Label htmlFor='tagsString'>Tags</Label>
+          <Input
+            placeholder='healthy, tea, seeds'
+            {...register('tagsString')}
+          />
+          {errors.name && (
+            <div className='text-xs text-red-500 font-medium'>
+              {errors.name.message}
+            </div>
+          )}
+        </div>
+
         <div>
           {/* Create an input to capture the unit */}
           <Label htmlFor='unit'>Unit</Label>
@@ -127,15 +139,6 @@ export const ProductForm = ({
         />
       </div>
 
-      <div>
-        <Label htmlFor='image'>Image</Label>
-        <Input
-          type='file'
-          accept='image/jpeg, image/png, image/webp'
-          {...register('image')}
-        />
-      </div>
-
       <div className='items-top flex space-x-2'>
         <Checkbox
           id='is_active'
@@ -163,6 +166,7 @@ export const ProductForm = ({
         </Button>
         <Button
           type='submit'
+          disabled={!isValid}
           className='text-white'
         >
           Save

@@ -30,16 +30,24 @@ export const router = createBrowserRouter([
         element: <adminPages.Dashboard />,
       },
       {
+        path: 'products/:id/edit/image',
+        element: <productsPages.EditProductImagePage />,
+      },
+      {
+        path: 'products/:id/edit',
+        element: <productsPages.EditProductPage />,
+      },
+      {
+        path: 'products/add',
+        element: <productsPages.AddProductPage />,
+      },
+      {
         path: 'products/:id',
         element: <productsPages.ProductDetailPage />,
       },
       {
         path: 'products',
         element: <productsPages.ProductsPage />,
-      },
-      {
-        path: 'products/add',
-        element: <productsPages.AddProductPage />,
       },
       {
         path: 'categories/:id/edit',

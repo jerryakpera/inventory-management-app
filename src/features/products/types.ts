@@ -1,10 +1,15 @@
 export type AddProduct = {
   name: string;
   unit: number;
-  image: File | null;
+  tags?: string[];
   is_active: boolean;
+  tagsString?: string;
   description: string;
   category: number | null;
+};
+
+export type ProductImage = {
+  image: string;
 };
 
 export type Unit = {
@@ -22,6 +27,7 @@ export type Product = {
   category_name: string | null;
   description?: string | null;
   slug: string;
+  tags: string[];
   unit: number;
   image?: string | null;
   is_active: boolean;
