@@ -10,14 +10,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 
-import { Product } from '@/features/products/types';
+import { Category } from '@/features/taxonomy/types';
 import { Link } from 'react-router-dom';
 
 type Props = {
-  product: Product;
+  category: Category;
 };
 
-export const RowActions = ({ product }: Props) => {
+export const RowActions = ({ category }: Props) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -32,14 +32,11 @@ export const RowActions = ({ product }: Props) => {
       <DropdownMenuContent align='end'>
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem className='cursor-pointer'>
-          <Link to={`/products/${product.id}`}>View details</Link>
+          <Link to={`/categories/${category.id}`}>View category</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className='cursor-pointer'>
-          Edit details
-        </DropdownMenuItem>
-        <DropdownMenuItem className='cursor-pointer'>
-          Add product variant
+          <Link to={`/categories/${category.id}/edit`}>Edit category</Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

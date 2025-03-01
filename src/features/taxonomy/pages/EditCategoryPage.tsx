@@ -1,5 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+import { toast } from 'sonner';
 
 import { PageTitle } from '@/components/shared';
 import { useAuthApi } from '@/hooks/use-auth-api';
@@ -10,6 +12,7 @@ import { AddCategory, Category } from '@/features/taxonomy/types';
 export const EditCategoryPage = () => {
   const authApi = useAuthApi();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { id } = useParams<{ id: string }>();
 
   const fetchCategory = async () => {
@@ -25,8 +28,20 @@ export const EditCategoryPage = () => {
     staleTime: 1000 * 60 * 5,
   });
 
+  const updateCategoryMutation = useMutation({
+    mutationKey: ['updateCategory', id],
+    mutationFn: (formData: AddCategory) =>
+      authApi.put(`/v1/categories/${id}/`, formData),
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['category', id] });
+    },
+  });
+
   const onSubmit = async (formData: AddCategory) => {
-    await authApi.put(`/v1/categories/${id}/`, formData);
+    updateCategoryMutation.mutate(formData);
+    // await authApi.put(`/v1/categories/${id}/`, formData);
+
+    toast.success('Category updated successfully');
     navigate(`/categories/${id}`);
   };
 
@@ -39,13 +54,24 @@ export const EditCategoryPage = () => {
       <div className='space-y-4'>
         {data ? (
           <>
-            <PageTitle
-              title={`Edit category - ${data.name}`}
-              subtitle='Complete the form to modify this category'
-            />
+            <div className='flex gap-4 items-center'>
+              {data.image && (
+                <div>
+                  <img
+                    src={data.image}
+                    alt={data.name}
+                    className='w-20 h-20 object-cover rounded-lg'
+                  />
+                </div>
+              )}
+              <PageTitle
+                title={`Edit category - ${data.name}`}
+                subtitle='Complete the form to modify this category'
+              />
+            </div>
             <CategoryForm
-              onSubmit={onSubmit}
               category={data}
+              onSubmit={onSubmit}
             />
           </>
         ) : (

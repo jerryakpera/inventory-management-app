@@ -10,7 +10,7 @@ import { AddCategory } from '@/features/taxonomy/types';
 
 type CategoryFormProps = {
   category?: AddCategory;
-  onSubmit: (formData: AddCategory) => void;
+  onSubmit: (formData: FormData) => void;
 };
 
 export const CategoryForm = ({ category, onSubmit }: CategoryFormProps) => {
@@ -29,10 +29,24 @@ export const CategoryForm = ({ category, onSubmit }: CategoryFormProps) => {
     },
   });
 
+  const handleFormSubmit = (data: AddCategory) => {
+    const formData = new FormData();
+
+    formData.append('name', data.name);
+    formData.append('description', data.description);
+
+    if (data.image && data.image.length > 0) {
+      formData.append('image', data.image[0]);
+    }
+
+    onSubmit(formData);
+  };
+
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
       className='space-y-6'
+      encType='multipart/form-data'
+      onSubmit={handleSubmit(handleFormSubmit)}
     >
       <div>
         <Label htmlFor='name'>Category name</Label>
@@ -58,6 +72,20 @@ export const CategoryForm = ({ category, onSubmit }: CategoryFormProps) => {
           <div className='text-red-500'>{errors.description.message}</div>
         )}
       </div>
+
+      {category && (
+        <div>
+          <Label htmlFor='image'>Image</Label>
+          <Input
+            readOnly
+            id='image'
+            type='file'
+            className='cursor-pointer'
+            accept='image/jpeg, image/png, image/webp'
+            {...register('image')}
+          />
+        </div>
+      )}
 
       <div className='flex justify-end gap-x-2 items-center'>
         <Button

@@ -8,9 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 
 import { RowActions } from './RowActions';
-import { Product } from '@/features/products/types';
+import { Category } from '@/features/taxonomy/types';
 
-export const productColumns: ColumnDef<Product>[] = [
+export const categoryColumns: ColumnDef<Category>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -71,19 +71,10 @@ export const productColumns: ColumnDef<Product>[] = [
     },
   },
   {
-    accessorKey: 'variant_count',
-    header: () => <div className='font-medium'>Variants</div>,
+    accessorKey: 'product_count',
+    header: () => <div className='font-medium'>Products</div>,
   },
-  {
-    accessorKey: 'category_name',
-    header: () => <div className='font-medium'>Category</div>,
-    cell: ({ row }) => {
-      const category = row.getValue('category_name') as string;
-      const formattedCategory = _.capitalize(category);
 
-      return <div className='text-left font-medium'>{formattedCategory}</div>;
-    },
-  },
   {
     accessorKey: 'updated',
     header: ({ column }) => {
@@ -108,8 +99,8 @@ export const productColumns: ColumnDef<Product>[] = [
   {
     id: 'actions',
     cell: ({ row }) => {
-      const product = row.original;
-      return <RowActions product={product} />;
+      const category = row.original;
+      return <RowActions category={category} />;
     },
   },
 ];

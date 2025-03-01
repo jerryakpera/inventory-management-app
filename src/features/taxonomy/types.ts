@@ -3,6 +3,7 @@ import { Product } from '../products/types';
 export type AddCategory = {
   name: string;
   description: string;
+  image?: string | null;
 };
 
 export type Category = {

@@ -29,22 +29,20 @@ import { Button } from '@/components/ui/button';
 
 import { useAuthApi } from '@/hooks/use-auth-api';
 
-import { DataTablePagination } from './DataTablePagination';
+import { DataTablePagination } from '@/components/shared';
 
-interface ProductsTableProps<TData, TValue> {
-  categoryId?: string;
+interface CategoriesTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
 }
 
 type PaginationState = {
-  pageIndex: number;
   pageSize: number;
+  pageIndex: number;
 };
 
-export function ProductsTable<TData, TValue>({
+export function CategoriesTable<TData, TValue>({
   columns,
-  categoryId,
-}: ProductsTableProps<TData, TValue>) {
+}: CategoriesTableProps<TData, TValue>) {
   const authApi = useAuthApi();
 
   const [rowSelection, setRowSelection] = useState({});
@@ -61,7 +59,7 @@ export function ProductsTable<TData, TValue>({
     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
   }, 500);
 
-  const fetchProducts = async (
+  const fetchCategories = async (
     pagination: PaginationState,
     search?: string,
     sorting?: SortingState
@@ -69,18 +67,13 @@ export function ProductsTable<TData, TValue>({
     const { pageIndex, pageSize } = pagination;
     const offset = pageIndex * pageSize;
 
-    let url = `/v1/products/?limit=${pageSize}&offset=${offset}`;
+    let url = `/v1/categories/?limit=${pageSize}&offset=${offset}`;
 
     if (search) {
       url += `&search=${search}`;
     }
 
-    if (categoryId) {
-      url += `&category=${categoryId}`;
-    }
-
     if (sorting && sorting.length > 0) {
-      console.log(sorting);
       const { id, desc } = sorting[0];
       const ordering = desc ? `-${id}` : id;
       url += `&ordering=${ordering}`;
@@ -91,15 +84,15 @@ export function ProductsTable<TData, TValue>({
     return response.data;
   };
 
-  const fetchProductsQuery = useQuery({
+  const fetchCategoriesQuery = useQuery({
     queryKey: [
-      'products',
+      'categories',
       pagination.pageIndex,
       pagination.pageSize,
       searchTerm,
       sorting,
     ],
-    queryFn: () => fetchProducts(pagination, searchTerm, sorting),
+    queryFn: () => fetchCategories(pagination, searchTerm, sorting),
   });
 
   const table = useReactTable({
@@ -112,9 +105,11 @@ export function ProductsTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
-    data: fetchProductsQuery.data?.results || [],
+    data: fetchCategoriesQuery.data?.results || [],
     getPaginationRowModel: getPaginationRowModel(),
-    pageCount: Math.ceil(fetchProductsQuery.data?.count / pagination.pageSize),
+    pageCount: Math.ceil(
+      fetchCategoriesQuery.data?.count / pagination.pageSize
+    ),
     onPaginationChange: setPagination,
     state: {
       sorting,
@@ -128,15 +123,18 @@ export function ProductsTable<TData, TValue>({
     <div>
       <div className='flex items-center py-4 justify-between'>
         <Input
-          placeholder='Search products...'
+          placeholder='Search categories...'
           onChange={(event) => throttledSearch(event.target.value)}
           className='max-w-sm'
         />
 
-        <Link to='/products/add'>
-          <Button>
+        <Link to='/categories/add'>
+          <Button
+            size='sm'
+            className='text-white bg-blue-700'
+          >
             <Plus />
-            Add Product
+            Add Category
           </Button>
         </Link>
       </div>
@@ -191,7 +189,9 @@ export function ProductsTable<TData, TValue>({
         </Table>
       </div>
 
-      <DataTablePagination table={table} />
+      <div className='mt-2'>
+        <DataTablePagination table={table} />
+      </div>
     </div>
   );
 }

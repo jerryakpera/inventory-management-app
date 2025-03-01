@@ -1,15 +1,19 @@
 import { toast } from 'sonner';
 import { capitalize } from 'lodash';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { Button } from '@/components/ui/button';
 
+import {
+  ProductsTable,
+  productColumns,
+} from '@/features/products/components/table';
+import { DeleteCategory } from '../components';
 import { PageTitle } from '@/components/shared';
 import { useAuthApi } from '@/hooks/use-auth-api';
 import { PageTransition } from '@/components/theme';
 import { Category } from '@/features/taxonomy/types';
-import { ProductsList } from '@/features/products/components/list/ProductsList';
 
 export const CategoryPage = () => {
   const authApi = useAuthApi();
@@ -22,30 +26,16 @@ export const CategoryPage = () => {
     return response.data;
   };
 
-  const deleteCategory = async () => {
-    if (!confirm('Are you sure you want to delete this category?')) return;
-    await authApi.delete(`/v1/categories/${id}/`);
-  };
-
-  const deleteCategoryMutation = useMutation({
-    mutationFn: deleteCategory,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['category', id],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['categories'],
-      });
-
-      toast.success('Category deleted successfully');
-      navigate('/categories');
-    },
-  });
-
   const { data, isLoading } = useQuery<Category>({
     queryKey: ['category', id],
     queryFn: fetchCategory,
   });
+
+  const handleCategoryDelete = async () => {
+    queryClient.invalidateQueries({ queryKey: ['categories'] });
+    toast.success('Category deleted successfully');
+    navigate('/categories');
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -56,11 +46,6 @@ export const CategoryPage = () => {
       <div className='space-y-4'>
         {data ? (
           <>
-            <PageTitle
-              title={`${capitalize(data.name)} - Category`}
-              subtitle={data.description}
-            />
-
             <div className='flex justify-end space-x-2'>
               <Link to={`/categories/${id}/edit`}>
                 <Button
@@ -70,26 +55,41 @@ export const CategoryPage = () => {
                   Edit
                 </Button>
               </Link>
-              <Button
-                size='sm'
-                variant='destructive'
-                onClick={() => deleteCategoryMutation.mutate()}
+              <DeleteCategory
+                categoryId={Number(id)}
+                onDelete={handleCategoryDelete}
               >
-                Delete
-              </Button>
+                <Button
+                  size='sm'
+                  variant='destructive'
+                >
+                  Delete
+                </Button>
+              </DeleteCategory>
+            </div>
+            <div className='flex flex-col gap-4 md:flex-row items-center'>
+              {data.image && (
+                <div>
+                  <img
+                    src={data.image}
+                    alt={data.name}
+                    className='w-28 h-3w-28 object-cover rounded-md border'
+                  />
+                </div>
+              )}
+
+              <PageTitle
+                title={`${capitalize(data.name)} - ${
+                  data.product_count
+                } product(s)`}
+                subtitle={data.description}
+              />
             </div>
 
-            {data.image && (
-              <div>
-                <img
-                  src={data.image}
-                  alt={data.name}
-                  className='w-32 h-3w-32 object-cover rounded-md border'
-                />
-              </div>
-            )}
-
-            <ProductsList products={data.products} />
+            <ProductsTable
+              columns={productColumns}
+              categoryId={String(data.id)}
+            />
           </>
         ) : (
           <div>Category data not found</div>
