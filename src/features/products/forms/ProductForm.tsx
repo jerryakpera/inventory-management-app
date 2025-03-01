@@ -45,7 +45,7 @@ export const ProductForm = ({
       'input[name="image"]'
     );
     if (fileInput?.files?.[0]) {
-      data.append('image', fileInput.files[0]); // Append file
+      data.append('image', fileInput.files[0]);
     }
 
     handleFormSubmit(data);
@@ -127,14 +127,14 @@ export const ProductForm = ({
         />
       </div>
 
-      {/* <div>
+      <div>
         <Label htmlFor='image'>Image</Label>
         <Input
           type='file'
           accept='image/jpeg, image/png, image/webp'
           {...register('image')}
         />
-      </div> */}
+      </div>
 
       <div className='items-top flex space-x-2'>
         <Checkbox

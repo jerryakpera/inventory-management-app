@@ -80,9 +80,9 @@ export function ProductsTable<TData, TValue>({
     }
 
     if (sorting && sorting.length > 0) {
-      console.log(sorting);
       const { id, desc } = sorting[0];
       const ordering = desc ? `-${id}` : id;
+
       url += `&ordering=${ordering}`;
     }
 

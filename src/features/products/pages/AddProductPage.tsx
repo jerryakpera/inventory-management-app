@@ -1,14 +1,15 @@
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useAuthApi } from '@/hooks/use-auth-api';
-import { ProductForm } from '@/features/products/forms/ProductForm';
 import { PageTransition } from '@/components/theme';
+import { ProductForm } from '@/features/products/forms/ProductForm';
 
 export const AddProductPage = () => {
-  const navigate = useNavigate();
   const authApi = useAuthApi();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const fetchCategories = async () => {
     const response = await authApi.get('/v1/categories/?limit=100');
@@ -18,11 +19,6 @@ export const AddProductPage = () => {
   const fetchUnits = async () => {
     const response = await authApi.get('/v1/units/?limit=100');
     return response.data.results;
-  };
-
-  const addProduct = async (formData: FormData) => {
-    const response = await authApi.post('/v1/products/', formData);
-    return response.data;
   };
 
   const categoriesQuery = useQuery({
@@ -41,11 +37,9 @@ export const AddProductPage = () => {
 
   const addProductMutation = useMutation({
     mutationKey: ['add-product'],
-    mutationFn: addProduct,
-    onSuccess: (data) => {
-      toast.success('Product saved successfully');
-
-      navigate(`/products/${data.id}`);
+    mutationFn: (formData: FormData) => authApi.post('/v1/products/', formData),
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['products'] });
     },
     onError: (error: {
       response?: { data: { detail?: string } };
@@ -69,6 +63,13 @@ export const AddProductPage = () => {
     },
   });
 
+  const onSubmit = async (formData: FormData) => {
+    addProductMutation.mutate(formData);
+
+    toast.success('Product added successfully!');
+    navigate('/products');
+  };
+
   if (categoriesQuery.isLoading || unitsQuery.isLoading) {
     return <div>Loading...</div>;
   }
@@ -85,8 +86,8 @@ export const AddProductPage = () => {
 
         <ProductForm
           units={unitsQuery.data}
+          handleFormSubmit={onSubmit}
           categories={categoriesQuery.data}
-          handleFormSubmit={addProductMutation.mutate}
         />
       </div>
     </PageTransition>

@@ -73,19 +73,17 @@ export const CategoryForm = ({ category, onSubmit }: CategoryFormProps) => {
         )}
       </div>
 
-      {category && (
-        <div>
-          <Label htmlFor='image'>Image</Label>
-          <Input
-            readOnly
-            id='image'
-            type='file'
-            className='cursor-pointer'
-            accept='image/jpeg, image/png, image/webp'
-            {...register('image')}
-          />
-        </div>
-      )}
+      <div>
+        <Label htmlFor='image'>Image</Label>
+        <Input
+          readOnly
+          id='image'
+          type='file'
+          className='cursor-pointer'
+          accept='image/jpeg, image/png, image/webp'
+          {...register('image')}
+        />
+      </div>
 
       <div className='flex justify-end gap-x-2 items-center'>
         <Button

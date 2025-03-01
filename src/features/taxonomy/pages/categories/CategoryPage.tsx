@@ -9,11 +9,11 @@ import {
   ProductsTable,
   productColumns,
 } from '@/features/products/components/table';
-import { DeleteCategory } from '../components';
 import { PageTitle } from '@/components/shared';
 import { useAuthApi } from '@/hooks/use-auth-api';
 import { PageTransition } from '@/components/theme';
 import { Category } from '@/features/taxonomy/types';
+import { DeleteCategory } from '@/features/taxonomy/components';
 
 export const CategoryPage = () => {
   const authApi = useAuthApi();
