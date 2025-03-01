@@ -92,7 +92,7 @@ export const ProductForm = ({
           {/* Create an input to capture the unit */}
           <Label htmlFor='unit'>Unit</Label>
           <select
-            className='select'
+            className='select dark:bg-transparent'
             {...register('unit', {
               required: 'The unit is required',
             })}
@@ -102,7 +102,7 @@ export const ProductForm = ({
                 <option
                   key={unit.id}
                   value={String(unit.id)}
-                  className='bg-gray-900'
+                  className='bg-transparent dark:bg-gray-900'
                 >
                   {`${capitalize(unit.name)} (${unit.symbol})`}
                 </option>
@@ -114,14 +114,14 @@ export const ProductForm = ({
           <Label htmlFor='category'>Category</Label>
           <select
             {...register('category')}
-            className='select'
+            className='select dark:bg-transparent'
           >
             {categories &&
               categories.map((category) => (
                 <option
                   key={category.id}
-                  className='bg-gray-900'
                   value={String(category.id)}
+                  className='bg-transparent dark:bg-gray-900'
                 >
                   {capitalize(category.name)}
                 </option>

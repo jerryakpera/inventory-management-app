@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 import { RowActions } from './RowActions';
 import { Category } from '@/features/taxonomy/types';
+import { Link } from 'react-router-dom';
 
 export const categoryColumns: ColumnDef<Category>[] = [
   {
@@ -65,9 +66,19 @@ export const categoryColumns: ColumnDef<Category>[] = [
       );
     },
     cell: ({ row }) => {
+      const category = row.original;
+
       const name = row.getValue('name') as string;
       const formattedName = _.capitalize(name);
-      return <div className='text-left font-medium'>{formattedName}</div>;
+
+      return (
+        <Link
+          to={`/categories/${category.id}`}
+          className='text-left font-semibold cursor-pointer text-blue-600 duration-75 hover:text-blue-700'
+        >
+          {formattedName}
+        </Link>
+      );
     },
   },
   {

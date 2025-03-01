@@ -1,8 +1,10 @@
-import { useState } from 'react';
 import { debounce } from 'lodash';
-import { Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { Plus, Trash } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+import { toast } from 'sonner';
 
 import {
   ColumnDef,
@@ -30,6 +32,7 @@ import { Button } from '@/components/ui/button';
 import { useAuthApi } from '@/hooks/use-auth-api';
 
 import { DataTablePagination } from './DataTablePagination';
+import { Product } from '../../types';
 
 interface ProductsTableProps<TData, TValue> {
   categoryId?: string;
@@ -46,10 +49,12 @@ export function ProductsTable<TData, TValue>({
   categoryId,
 }: ProductsTableProps<TData, TValue>) {
   const authApi = useAuthApi();
+  const queryClient = useQueryClient();
 
   const [rowSelection, setRowSelection] = useState({});
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [selectedRowsIds, setSelectedRowsIds] = useState<number[]>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -124,21 +129,65 @@ export function ProductsTable<TData, TValue>({
     },
   });
 
+  const deleteProductsMutation = useMutation({
+    mutationKey: ['deleteProducts'],
+    mutationFn: async (ids: number[]) => {
+      await authApi.post(`/v1/products/bulk-delete/`, { ids });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+
+      toast.success('Products deleted successfully.');
+
+      // Unselect all rows after deleting products
+      table.setRowSelection({});
+    },
+  });
+
+  const deleteProducts: () => void = () => {
+    if (confirm('Are you sure you want to delete the selected products?')) {
+      deleteProductsMutation.mutate(selectedRowsIds);
+    }
+  };
+
+  useEffect(() => {
+    const selectedRows = table.getFilteredSelectedRowModel().rows;
+    const selectedRowsIds = selectedRows.map((row) => {
+      const product: Product = row.original as Product;
+      return product.id;
+    });
+
+    setSelectedRowsIds(selectedRowsIds);
+  }, [rowSelection, table]);
+
   return (
     <div>
       <div className='flex items-center py-4 justify-between'>
-        <Input
-          placeholder='Search products...'
-          onChange={(event) => throttledSearch(event.target.value)}
-          className='max-w-sm'
-        />
+        <div>
+          <Input
+            placeholder='Search products...'
+            onChange={(event) => throttledSearch(event.target.value)}
+          />
+        </div>
 
-        <Link to='/products/add'>
-          <Button>
-            <Plus />
-            Add Product
+        <div className='space-x-2'>
+          <Button
+            size='sm'
+            variant='destructive'
+            onClick={deleteProducts}
+            disabled={selectedRowsIds.length === 0}
+          >
+            <Trash />
+            <span className='hidden sm:block'>Delete Products</span>
           </Button>
-        </Link>
+
+          <Link to='/products/add'>
+            <Button size='sm'>
+              <Plus />
+              <span className='hidden sm:block'>Add Product</span>
+            </Button>
+          </Link>
+        </div>
       </div>
       <div className='rounded-md border'>
         <Table>

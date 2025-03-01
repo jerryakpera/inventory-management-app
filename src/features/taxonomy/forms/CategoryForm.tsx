@@ -87,8 +87,9 @@ export const CategoryForm = ({ category, onSubmit }: CategoryFormProps) => {
 
       <div className='flex justify-end gap-x-2 items-center'>
         <Button
-          onClick={() => navigate(-1)}
+          type='button'
           variant='destructive'
+          onClick={() => navigate(-1)}
         >
           Cancel
         </Button>

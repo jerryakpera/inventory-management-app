@@ -55,7 +55,7 @@ export const EditProductPage = () => {
   const updateProductMutation = useMutation({
     mutationKey: ['updateProduct', id],
     mutationFn: (formData: AddProduct) =>
-      authApi.put(`/v1/products/${id}/`, formData),
+      authApi.patch(`/v1/products/${id}/`, formData),
     onSettled: async () => {
       await queryClient.invalidateQueries({ queryKey: ['product', id] });
     },

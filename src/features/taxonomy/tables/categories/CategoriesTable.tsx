@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import { debounce } from 'lodash';
-import { Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { Plus, Trash } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
   ColumnDef,
@@ -15,6 +15,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
 } from '@tanstack/react-table';
+import { toast } from 'sonner';
 
 import {
   Table,
@@ -29,6 +30,7 @@ import { Button } from '@/components/ui/button';
 
 import { useAuthApi } from '@/hooks/use-auth-api';
 
+import { Category } from '@/features/taxonomy/types';
 import { DataTablePagination } from '@/components/shared';
 
 interface CategoriesTableProps<TData, TValue> {
@@ -44,10 +46,12 @@ export function CategoriesTable<TData, TValue>({
   columns,
 }: CategoriesTableProps<TData, TValue>) {
   const authApi = useAuthApi();
+  const queryClient = useQueryClient();
 
   const [rowSelection, setRowSelection] = useState({});
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [selectedRowsIds, setSelectedRowsIds] = useState<number[]>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -119,24 +123,73 @@ export function CategoriesTable<TData, TValue>({
     },
   });
 
+  const deleteCategoriesMutation = useMutation({
+    mutationKey: ['deleteCategories'],
+    mutationFn: async (ids: number[]) => {
+      await authApi.post(`/v1/categories/bulk-delete/`, { ids });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+
+      toast.success(
+        `${selectedRowsIds.length} ${
+          selectedRowsIds.length === 1 ? 'category' : 'categories'
+        } deleted successfully.`
+      );
+
+      // Unselect all rows after deleting products
+      table.setRowSelection({});
+    },
+  });
+
+  const deleteCategories: () => void = () => {
+    if (confirm('Are you sure you want to delete the selected categories?')) {
+      deleteCategoriesMutation.mutate(selectedRowsIds);
+    }
+  };
+
+  useEffect(() => {
+    const selectedRows = table.getFilteredSelectedRowModel().rows;
+    const selectedRowsIds = selectedRows.map((row) => {
+      const category: Category = row.original as Category;
+      return category.id;
+    });
+
+    setSelectedRowsIds(selectedRowsIds);
+  }, [rowSelection, table]);
+
   return (
     <div>
       <div className='flex items-center py-4 justify-between'>
-        <Input
-          placeholder='Search categories...'
-          onChange={(event) => throttledSearch(event.target.value)}
-          className='max-w-sm'
-        />
+        <div>
+          <Input
+            className='max-w-sm'
+            placeholder='Search categories...'
+            onChange={(event) => throttledSearch(event.target.value)}
+          />
+        </div>
 
-        <Link to='/categories/add'>
+        <div className='space-x-2'>
           <Button
             size='sm'
-            className='text-white bg-blue-700'
+            variant='destructive'
+            onClick={deleteCategories}
+            disabled={selectedRowsIds.length === 0}
           >
-            <Plus />
-            Add Category
+            <Trash />
+            <span className='hidden sm:block'>Delete Products</span>
           </Button>
-        </Link>
+
+          <Link to='/categories/add'>
+            <Button
+              size='sm'
+              className='text-white bg-blue-700'
+            >
+              <Plus />
+              Add Category
+            </Button>
+          </Link>
+        </div>
       </div>
       <div className='rounded-md border'>
         <Table>

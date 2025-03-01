@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RowActions } from './RowActions';
 import { Product } from '@/features/products/types';
 import { Link } from 'react-router-dom';
+import { noImage } from '@/assets/images';
 
 export const productColumns: ColumnDef<Product>[] = [
   {
@@ -41,12 +42,10 @@ export const productColumns: ColumnDef<Product>[] = [
       const category = row.original;
       const imageUrl = row.getValue('image') as string;
 
-      if (!imageUrl) return null;
-
       return (
         <img
-          src={imageUrl}
           alt={category.name}
+          src={imageUrl || noImage}
           className='w-10 h-10 rounded-md'
         />
       );

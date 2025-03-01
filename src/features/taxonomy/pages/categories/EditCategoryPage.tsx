@@ -6,8 +6,8 @@ import { toast } from 'sonner';
 import { PageTitle } from '@/components/shared';
 import { useAuthApi } from '@/hooks/use-auth-api';
 import { PageTransition } from '@/components/theme';
+import { Category } from '@/features/taxonomy/types';
 import { CategoryForm } from '@/features/taxonomy/forms';
-import { AddCategory, Category } from '@/features/taxonomy/types';
 
 export const EditCategoryPage = () => {
   const authApi = useAuthApi();
@@ -30,16 +30,15 @@ export const EditCategoryPage = () => {
 
   const updateCategoryMutation = useMutation({
     mutationKey: ['updateCategory', id],
-    mutationFn: (formData: AddCategory) =>
-      authApi.put(`/v1/categories/${id}/`, formData),
+    mutationFn: (formData: FormData) =>
+      authApi.patch(`/v1/categories/${id}/`, formData),
     onSettled: async () => {
       await queryClient.invalidateQueries({ queryKey: ['category', id] });
     },
   });
 
-  const onSubmit = async (formData: AddCategory) => {
+  const onSubmit = async (formData: FormData) => {
     updateCategoryMutation.mutate(formData);
-    // await authApi.put(`/v1/categories/${id}/`, formData);
 
     toast.success('Category updated successfully');
     navigate(`/categories/${id}`);
