@@ -7,6 +7,8 @@ import {
   RefreshCcw,
   UsersRound,
   ShoppingCart,
+  FolderOpenDot,
+  ShoppingBasket,
 } from 'lucide-react';
 
 export const data = {
@@ -38,13 +40,13 @@ export const data = {
       ],
     },
     {
-      title: 'Miscellaneous',
+      title: 'Catalog',
       url: '#',
-      icon: Tag,
+      icon: ShoppingBasket,
       items: [
+        { title: 'Products', url: '/products' },
+        { title: 'Variants', url: '/variants' },
         { title: 'Categories', url: '/categories' },
-        { title: 'Units', url: '/units' },
-        { title: 'Brands', url: '/brands' },
       ],
     },
     {
@@ -53,9 +55,17 @@ export const data = {
       icon: Package,
       items: [
         { title: 'Add Product', url: '/products/add' },
-        { title: 'All Products', url: '/products' },
         { title: 'Adjust Stock', url: '#' },
         { title: 'Transfer Stock', url: '#' },
+      ],
+    },
+    {
+      title: 'Miscellaneous',
+      url: '#',
+      icon: Tag,
+      items: [
+        { title: 'Units', url: '/units' },
+        { title: 'Brands', url: '/brands' },
       ],
     },
     {

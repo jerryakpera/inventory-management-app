@@ -4,8 +4,6 @@ import { Plus, Trash } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { toast } from 'sonner';
-
 import {
   ColumnDef,
   flexRender,
@@ -17,6 +15,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
 } from '@tanstack/react-table';
+import { toast } from 'sonner';
 
 import {
   Table,
@@ -31,12 +30,10 @@ import { Button } from '@/components/ui/button';
 
 import { useAuthApi } from '@/hooks/use-auth-api';
 
-import { DataTablePagination } from './DataTablePagination';
-import { Product } from '../../types';
+import { Unit } from '@/features/taxonomy/types';
+import { DataTablePagination } from '@/components/shared';
 
-interface ProductsTableProps<TData, TValue> {
-  unitId?: string;
-  categoryId?: string;
+interface UnitsTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
 }
 
@@ -45,11 +42,9 @@ type PaginationState = {
   pageIndex: number;
 };
 
-export function ProductsTable<TData, TValue>({
-  unitId,
+export function UnitsTable<TData, TValue>({
   columns,
-  categoryId,
-}: ProductsTableProps<TData, TValue>) {
+}: UnitsTableProps<TData, TValue>) {
   const authApi = useAuthApi();
   const queryClient = useQueryClient();
 
@@ -68,7 +63,7 @@ export function ProductsTable<TData, TValue>({
     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
   }, 500);
 
-  const fetchProducts = async (
+  const fetchUnits = async (
     pagination: PaginationState,
     search?: string,
     sorting?: SortingState
@@ -76,24 +71,15 @@ export function ProductsTable<TData, TValue>({
     const { pageIndex, pageSize } = pagination;
     const offset = pageIndex * pageSize;
 
-    let url = `/v1/products/?limit=${pageSize}&offset=${offset}`;
+    let url = `/v1/units/?limit=${pageSize}&offset=${offset}`;
 
     if (search) {
       url += `&search=${search}`;
     }
 
-    if (categoryId) {
-      url += `&category=${categoryId}`;
-    }
-
-    if (unitId) {
-      url += `&unit=${unitId}`;
-    }
-
     if (sorting && sorting.length > 0) {
       const { id, desc } = sorting[0];
       const ordering = desc ? `-${id}` : id;
-
       url += `&ordering=${ordering}`;
     }
 
@@ -102,15 +88,15 @@ export function ProductsTable<TData, TValue>({
     return response.data;
   };
 
-  const fetchProductsQuery = useQuery({
+  const fetchUnitsQuery = useQuery({
     queryKey: [
-      'products',
+      'units',
       pagination.pageIndex,
       pagination.pageSize,
       searchTerm,
       sorting,
     ],
-    queryFn: () => fetchProducts(pagination, searchTerm, sorting),
+    queryFn: () => fetchUnits(pagination, searchTerm, sorting),
   });
 
   const table = useReactTable({
@@ -123,9 +109,9 @@ export function ProductsTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
-    data: fetchProductsQuery.data?.results || [],
+    data: fetchUnitsQuery.data?.results || [],
     getPaginationRowModel: getPaginationRowModel(),
-    pageCount: Math.ceil(fetchProductsQuery.data?.count / pagination.pageSize),
+    pageCount: Math.ceil(fetchUnitsQuery.data?.count / pagination.pageSize),
     onPaginationChange: setPagination,
     state: {
       sorting,
@@ -135,32 +121,36 @@ export function ProductsTable<TData, TValue>({
     },
   });
 
-  const deleteProductsMutation = useMutation({
-    mutationKey: ['deleteProducts'],
+  const deleteUnitsMutation = useMutation({
+    mutationKey: ['deleteUnits'],
     mutationFn: async (ids: number[]) => {
-      await authApi.post(`/v1/products/bulk-delete/`, { ids });
+      await authApi.post(`/v1/units/bulk-delete/`, { ids });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['units'] });
 
-      toast.success('Products deleted successfully.');
+      toast.success(
+        `${selectedRowsIds.length} ${
+          selectedRowsIds.length === 1 ? 'unit' : 'units'
+        } deleted successfully.`
+      );
 
-      // Unselect all rows after deleting products
+      // Unselect all rows after deleting units
       table.setRowSelection({});
     },
   });
 
-  const deleteProducts: () => void = () => {
-    if (confirm('Are you sure you want to delete the selected products?')) {
-      deleteProductsMutation.mutate(selectedRowsIds);
+  const deleteUnits: () => void = () => {
+    if (confirm('Are you sure you want to delete the selected units?')) {
+      deleteUnitsMutation.mutate(selectedRowsIds);
     }
   };
 
   useEffect(() => {
     const selectedRows = table.getFilteredSelectedRowModel().rows;
     const selectedRowsIds = selectedRows.map((row) => {
-      const product: Product = row.original as Product;
-      return product.id;
+      const unit: Unit = row.original as Unit;
+      return unit.id;
     });
 
     setSelectedRowsIds(selectedRowsIds);
@@ -171,7 +161,8 @@ export function ProductsTable<TData, TValue>({
       <div className='flex items-center py-4 justify-between'>
         <div>
           <Input
-            placeholder='Search products...'
+            className='max-w-sm'
+            placeholder='Search units...'
             onChange={(event) => throttledSearch(event.target.value)}
           />
         </div>
@@ -180,17 +171,20 @@ export function ProductsTable<TData, TValue>({
           <Button
             size='sm'
             variant='destructive'
-            onClick={deleteProducts}
+            onClick={deleteUnits}
             disabled={selectedRowsIds.length === 0}
           >
             <Trash />
-            <span className='hidden sm:block'>Delete Products</span>
+            <span className='hidden sm:block'>Delete Units</span>
           </Button>
 
-          <Link to='/products/add'>
-            <Button size='sm'>
+          <Link to='/units/add'>
+            <Button
+              size='sm'
+              className='text-white bg-blue-700'
+            >
               <Plus />
-              <span className='hidden sm:block'>Add Product</span>
+              Add Unit
             </Button>
           </Link>
         </div>
@@ -246,7 +240,9 @@ export function ProductsTable<TData, TValue>({
         </Table>
       </div>
 
-      <DataTablePagination table={table} />
+      <div className='mt-2'>
+        <DataTablePagination table={table} />
+      </div>
     </div>
   );
 }

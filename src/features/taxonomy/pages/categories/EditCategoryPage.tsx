@@ -41,7 +41,7 @@ export const EditCategoryPage = () => {
     updateCategoryMutation.mutate(formData);
 
     toast.success('Category updated successfully');
-    navigate(`/categories/${id}`);
+    navigate(-1);
   };
 
   if (isLoading) {

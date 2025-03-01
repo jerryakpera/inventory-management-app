@@ -137,7 +137,7 @@ export function CategoriesTable<TData, TValue>({
         } deleted successfully.`
       );
 
-      // Unselect all rows after deleting products
+      // Unselect all rows after deleting categories
       table.setRowSelection({});
     },
   });
@@ -177,7 +177,7 @@ export function CategoriesTable<TData, TValue>({
             disabled={selectedRowsIds.length === 0}
           >
             <Trash />
-            <span className='hidden sm:block'>Delete Products</span>
+            <span className='hidden sm:block'>Delete Categories</span>
           </Button>
 
           <Link to='/categories/add'>

@@ -4,23 +4,24 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useAuthApi } from '@/hooks/use-auth-api';
 import { PageTransition } from '@/components/theme';
-import { CategoryForm } from '@/features/taxonomy/forms/CategoryForm';
+import { AddUnit } from '@/features/taxonomy/types';
+import { UnitForm } from '@/features/taxonomy/forms';
 
-export const AddCategoryPage = () => {
+export const AddUnitPage = () => {
   const authApi = useAuthApi();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const addCategory = async (formData: FormData) => {
-    const response = await authApi.post('/v1/categories/', formData);
+  const addUnit = async (formData: AddUnit) => {
+    const response = await authApi.post('/v1/units/', formData);
     return response.data;
   };
 
-  const addCategoryMutation = useMutation({
-    mutationKey: ['add-category'],
-    mutationFn: addCategory,
+  const addUnitMutation = useMutation({
+    mutationKey: ['add-unit'],
+    mutationFn: addUnit,
     onSettled: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['categories'] });
+      await queryClient.invalidateQueries({ queryKey: ['units'] });
     },
     onError: (error: {
       response?: { data: { detail?: string } };
@@ -40,15 +41,15 @@ export const AddCategoryPage = () => {
         return;
       }
 
-      toast.error('Category not saved. Please try again.');
+      toast.error('Unit not saved. Please try again.');
     },
   });
 
-  const onSubmit = async (formData: FormData) => {
-    addCategoryMutation.mutate(formData);
+  const onSubmit = async (formData: AddUnit) => {
+    addUnitMutation.mutate(formData);
 
-    toast.success('Category added successfully!');
-    navigate('/categories');
+    toast.success('Unit added successfully!');
+    navigate('/units');
   };
 
   return (
@@ -57,11 +58,11 @@ export const AddCategoryPage = () => {
         <div>
           <h1 className='text-xl font-bold tracking-wide'>Add Product</h1>
           <h3 className='text-sm text-gray-700 font-medium'>
-            Fill in the form to add a new category to the inventory.
+            Fill in the form to add a new unit to the inventory.
           </h3>
         </div>
 
-        <CategoryForm onSubmit={onSubmit} />
+        <UnitForm onSubmit={onSubmit} />
       </div>
     </PageTransition>
   );

@@ -1,5 +1,18 @@
 import { Product } from '../products/types';
 
+export type AddUnit = {
+  name: string;
+  symbol: string;
+};
+
+export type Unit = {
+  id: number;
+  name: string;
+  symbol: string;
+  products: Product[];
+  product_count: number;
+};
+
 export type AddCategory = {
   name: string;
   description: string;

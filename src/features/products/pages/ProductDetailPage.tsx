@@ -71,7 +71,7 @@ export const ProductDetailPage = () => {
                 <img
                   alt={data.name || ''}
                   src={data.image || noImage}
-                  className='w-full h-full object-cover rounded-md'
+                  className='w-[100%] h-[100%] object-cover rounded-md'
                 />
                 <Link to={`/products/${id}/edit/image`}>
                   <Button

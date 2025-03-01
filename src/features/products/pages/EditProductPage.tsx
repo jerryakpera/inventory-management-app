@@ -65,7 +65,7 @@ export const EditProductPage = () => {
     updateProductMutation.mutate(formData);
 
     toast.success('Product updated successfully');
-    navigate(`/products/${id}`);
+    navigate(-1);
   };
 
   if (isLoading) {
