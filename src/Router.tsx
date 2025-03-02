@@ -3,6 +3,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import AdminLayout from '@/features/admin/layout/AdminLayout';
 
 import * as adminPages from '@/features/admin/pages';
+import * as variantPages from '@/features/variants/pages';
 import * as productsPages from '@/features/products/pages';
 import * as unitPages from '@/features/taxonomy/pages/units';
 import * as categoriesPages from '@/features/taxonomy/pages/categories';
@@ -29,6 +30,22 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <adminPages.Dashboard />,
+      },
+      {
+        path: 'variants/add',
+        element: <variantPages.AddProductVariantPage />,
+      },
+      {
+        path: 'variants/:id/edit',
+        element: <variantPages.EditVariantPage />,
+      },
+      {
+        path: 'variants/:id',
+        element: <variantPages.VariantDetailPage />,
+      },
+      {
+        path: 'variants',
+        element: <variantPages.VariantsPage />,
       },
       {
         path: 'products/:id/edit/image',
@@ -81,6 +98,10 @@ export const router = createBrowserRouter([
       {
         path: 'units/',
         element: <unitPages.UnitsPage />,
+      },
+      {
+        path: 'catalog',
+        element: <productsPages.CatalogIndex />,
       },
     ],
   },

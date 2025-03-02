@@ -7,7 +7,6 @@ import {
   RefreshCcw,
   UsersRound,
   ShoppingCart,
-  FolderOpenDot,
   ShoppingBasket,
 } from 'lucide-react';
 
@@ -31,15 +30,6 @@ export const data = {
   ],
   navMain: [
     {
-      title: 'Users',
-      url: '#',
-      icon: UsersRound,
-      items: [
-        { title: 'User Management', url: '#' },
-        { title: 'Activity Logs', url: '#' },
-      ],
-    },
-    {
       title: 'Catalog',
       url: '#',
       icon: ShoppingBasket,
@@ -54,7 +44,6 @@ export const data = {
       url: '#',
       icon: Package,
       items: [
-        { title: 'Add Product', url: '/products/add' },
         { title: 'Adjust Stock', url: '#' },
         { title: 'Transfer Stock', url: '#' },
       ],
@@ -96,6 +85,15 @@ export const data = {
       items: [
         { title: 'Returns Management', url: '#' },
         { title: 'Stock Adjustments', url: '#' },
+      ],
+    },
+    {
+      title: 'Users',
+      url: '#',
+      icon: UsersRound,
+      items: [
+        { title: 'User Management', url: '#' },
+        { title: 'Activity Logs', url: '#' },
       ],
     },
     {

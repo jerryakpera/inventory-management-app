@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 
-import { Category } from '@/features/taxonomy/types';
-import { AddProduct, Product, Unit } from '@/features/products/types';
+import { Category, Unit } from '@/features/taxonomy/types';
+import { AddProduct, Product } from '@/features/products/types';
 
 type ProductFormProps = {
   units: Unit[];

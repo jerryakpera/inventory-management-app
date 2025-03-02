@@ -33,15 +33,15 @@ export const EditProductPage = () => {
   const categoriesQuery = useQuery({
     queryKey: ['categories'],
     queryFn: fetchCategories,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 
   const unitsQuery = useQuery({
     queryKey: ['units'],
     queryFn: fetchUnits,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 
   const { data, isLoading } = useQuery<Product>({

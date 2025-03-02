@@ -1,3 +1,4 @@
+export * from './CatalogIndex';
 export * from './ProductsPage';
 export * from './AddProductPage';
 export * from './EditProductPage';

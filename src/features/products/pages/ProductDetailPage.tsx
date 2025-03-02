@@ -1,5 +1,6 @@
 import { toast } from 'sonner';
 import { capitalize } from 'lodash';
+import { Edit } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -12,7 +13,6 @@ import { useAuthApi } from '@/hooks/use-auth-api';
 import { PageTransition } from '@/components/theme';
 import { Product } from '@/features/products/types';
 import { DeleteProduct } from '@/features/products/components/DeleteProduct';
-import { Edit } from 'lucide-react';
 
 export const ProductDetailPage = () => {
   const authApi = useAuthApi();

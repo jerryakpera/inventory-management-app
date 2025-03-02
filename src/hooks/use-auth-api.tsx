@@ -20,7 +20,9 @@ export function useAuthApi() {
     // timeout: 5000,
     timeout: 20000,
     withCredentials: true,
-    baseURL: import.meta.env.VITE_BASE_API_URL as string,
+    baseURL: import.meta.env.PROD
+      ? (import.meta.env.VITE_PROD_BASE_API_URL as string)
+      : (import.meta.env.VITE_BASE_API_URL as string),
   });
 
   authApiClient.defaults.headers.common['X-CSRFToken'] =

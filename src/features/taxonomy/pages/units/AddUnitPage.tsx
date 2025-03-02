@@ -54,7 +54,7 @@ export const AddUnitPage = () => {
 
   return (
     <PageTransition>
-      <div className='py-4 sm:py-10 space-y-4'>
+      <div className='space-y-4'>
         <div>
           <h1 className='text-xl font-bold tracking-wide'>Add Product</h1>
           <h3 className='text-sm text-gray-700 font-medium'>

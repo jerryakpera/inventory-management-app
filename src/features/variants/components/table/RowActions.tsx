@@ -11,13 +11,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 
-import { Product } from '@/features/products/types';
+import { ProductVariant } from '@/features/variants/types';
 
 type Props = {
-  product: Product;
+  variant: ProductVariant;
 };
 
-export const RowActions = ({ product }: Props) => {
+export const RowActions = ({ variant }: Props) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -32,11 +32,11 @@ export const RowActions = ({ product }: Props) => {
       <DropdownMenuContent align='end'>
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem className='cursor-pointer'>
-          <Link to={`/products/${product.id}`}>View details</Link>
+          <Link to={`/variants/${variant.id}`}>View details</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className='cursor-pointer'>
-          <Link to={`/products/${product.id}/edit`}>Edit details</Link>
+          <Link to={`/variants/${variant.id}/edit`}>Edit details</Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
