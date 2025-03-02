@@ -1,6 +1,5 @@
 import { toast } from 'sonner';
-import { capitalize } from 'lodash';
-import { Edit, ToggleLeft, ToggleRight } from 'lucide-react';
+import { ToggleLeft, ToggleRight } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
