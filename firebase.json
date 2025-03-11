@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "one-stop-healty-shop",
+    "site": "one-stop-healthy-shop",
     "public": "dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
