@@ -1,5 +1,4 @@
-import { useNavigate } from 'react-router-dom';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
 import {
   Bell,
@@ -26,8 +25,10 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from '@/components/ui/sidebar';
+import { toast } from 'sonner';
 
-import { useAuthApi } from '@/hooks/use-auth-api';
+import { useContext } from 'react';
+import { AuthContext } from '@/contexts/AuthContext';
 
 export function NavUser({
   user,
@@ -38,27 +39,20 @@ export function NavUser({
     avatar: string;
   };
 }) {
-  const navigate = useNavigate();
   const { isMobile } = useSidebar();
-  const authApiClient = useAuthApi();
-  const queryClient = useQueryClient();
 
-  const logoutRequest = async () => {
-    return await authApiClient.post('/token/logout/');
-  };
+  const { logoutUser, setUser, setToken } = useContext(AuthContext);
 
   const logoutMutation = useMutation({
     mutationKey: ['logout'],
-    mutationFn: logoutRequest,
-    onError: (error) => {
-      console.error(error);
+    mutationFn: logoutUser,
+    onError: () => {
+      toast.error("Couldn't log out. Please try again.");
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user'] });
-      queryClient.invalidateQueries({ queryKey: ['refreshToken'] });
-      queryClient.clear();
-
-      navigate('/login');
+      setUser(null);
+      setToken(null);
+      localStorage.removeItem('token');
     },
   });
 

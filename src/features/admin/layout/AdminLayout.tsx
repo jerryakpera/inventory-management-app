@@ -1,5 +1,4 @@
 import { ArrowLeft } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { AppSidebar } from '@/features/admin/layout/components';
 
@@ -21,23 +20,10 @@ import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/sonner';
 import { Separator } from '@/components/ui/separator';
 
-import { useAuthApi } from '@/hooks/use-auth-api';
 import { ModeToggle } from '@/components/theme/ModeToggle';
 
 export default function Page() {
   const navigate = useNavigate();
-  const authApiClient = useAuthApi();
-
-  const fetchUser = async () => {
-    const response = await authApiClient.get('/v1/users/me/');
-    return response.data;
-  };
-
-  useQuery({
-    queryKey: ['user'],
-    queryFn: fetchUser,
-    staleTime: 1000 * 60 * 5,
-  });
 
   return (
     <SidebarProvider>
