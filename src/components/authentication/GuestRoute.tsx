@@ -8,15 +8,12 @@ type GuestRouteProps = {
 };
 
 export const GuestRoute = ({ children }: GuestRouteProps) => {
-  console.log('GuestRoute');
   const navigate = useNavigate();
 
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    console.log('GuestRoute - useEffect');
     if (user) {
-      console.log('GuestRoute - useEffect - user');
       navigate('/');
     }
   }, [user, navigate]);

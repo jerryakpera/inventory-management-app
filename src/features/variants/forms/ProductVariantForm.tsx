@@ -54,8 +54,6 @@ export const ProductVariantForm = ({
   const handleFormSubmit = (data: AddProductVariant) => {
     const formData = new FormData();
 
-    console.log(data.is_active);
-
     formData.append('size', data.size);
     formData.append('price', data.price);
     formData.append('brand', data.brand || '');

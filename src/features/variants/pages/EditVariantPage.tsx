@@ -45,7 +45,6 @@ export const EditVariantPage = () => {
   });
 
   const onSubmit = async (formData: FormData) => {
-    console.log(formData);
     updateVariantMutation.mutate(formData);
 
     toast.success('Product variant updated successfully');
