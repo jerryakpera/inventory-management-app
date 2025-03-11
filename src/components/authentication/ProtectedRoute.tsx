@@ -8,12 +8,10 @@ type ProtectedRouteProps = {
 };
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  console.log('ProtectedRoute');
   const navigate = useNavigate();
   const { user, loading } = useContext(AuthContext);
 
   useEffect(() => {
-    console.log('ProtectedRoute - useEffect');
     if (!loading && !user) {
       navigate('/login');
     }
