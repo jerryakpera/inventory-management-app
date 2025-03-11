@@ -1,8 +1,8 @@
 import axios from 'axios';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
 
-import { useAuthToken } from './use-auth-token';
+import { AuthContext } from '@/contexts/AuthContext';
 
 const getCsrfTokenFromCookie = () => {
   const cookies = document.cookie.split('; ');
@@ -15,10 +15,10 @@ const getCsrfTokenFromCookie = () => {
 
 export function useAuthApi() {
   const navigate = useNavigate();
+  const { token } = useContext(AuthContext);
 
   const authApiClient = axios.create({
-    // timeout: 5000,
-    timeout: 20000,
+    timeout: 5000,
     withCredentials: true,
     baseURL: import.meta.env.PROD
       ? (import.meta.env.VITE_PROD_BASE_API_URL as string)
@@ -28,13 +28,9 @@ export function useAuthApi() {
   authApiClient.defaults.headers.common['X-CSRFToken'] =
     getCsrfTokenFromCookie();
 
-  const queryClient = useQueryClient();
-
-  const { data } = useAuthToken();
-
-  if (data && data.access) {
+  if (token) {
     authApiClient.interceptors.request.use((config) => {
-      config.headers.Authorization = `Bearer ${data.access}`;
+      config.headers.Authorization = `Bearer ${token}`;
       return config;
     });
   }
@@ -43,10 +39,9 @@ export function useAuthApi() {
     (response) => response,
     async (error) => {
       if (error.response?.status === 401) {
-        await queryClient.invalidateQueries({ queryKey: ['refreshToken'] });
-
         navigate('/login');
       }
+
       return Promise.reject(error);
     }
   );

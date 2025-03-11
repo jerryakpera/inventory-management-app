@@ -7,8 +7,8 @@ import * as variantPages from '@/features/variants/pages';
 import * as productsPages from '@/features/products/pages';
 import * as unitPages from '@/features/taxonomy/pages/units';
 import * as categoriesPages from '@/features/taxonomy/pages/categories';
-
-import { GuestRoute, ProtectedRoute } from '@/components/auth';
+import { GuestRoute } from './components/authentication/GuestRoute';
+import { ProtectedRoute } from './components/authentication/ProtectedRoute';
 
 export const router = createBrowserRouter([
   {

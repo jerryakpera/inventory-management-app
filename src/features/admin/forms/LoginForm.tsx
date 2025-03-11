@@ -1,9 +1,9 @@
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
-
-import { cn } from '@/lib/utils';
+import { useContext, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/sonner';
 
 import { Input } from '@/components/ui/input';
@@ -11,9 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
-import { publicApiClient } from '@/api';
-import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
+import { AuthContext } from '@/contexts/AuthContext';
 
 type LoginFormType = {
   email: string;
@@ -24,8 +22,9 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<'form'>) {
-  const navigate = useNavigate();
   const [requestError, setRequestError] = useState('');
+
+  const { login } = useContext(AuthContext);
 
   const {
     register,
@@ -36,19 +35,15 @@ export function LoginForm({
     reValidateMode: 'onChange',
   });
 
-  const loginRequest = async (formData: LoginFormType) => {
-    await publicApiClient.post('/token/', formData);
-  };
-
   const loginMutation = useMutation({
     mutationKey: ['login'],
-    mutationFn: (formData: LoginFormType) => loginRequest(formData),
+    mutationFn: (formData: LoginFormType) =>
+      login(formData.email, formData.password),
     onError: (error) => {
       setRequestError(error.message);
     },
     onSuccess: () => {
       toast.success('Logged in successfully');
-      navigate('/');
     },
   });
 
